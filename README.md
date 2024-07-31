@@ -32,16 +32,21 @@ https://vant-contrib.gitee.io/vant/#/zh-CN
 $ npm i vant
 ```
 
-````
+```
 $ npm i unplugin-vue-components -D
 ```
+
 （防止版本过高产生的引用问题 v0.25.2——TypeError: ComponentsPlugin is not a function）
 
 ## 更改 vue.config.js:
 
-### const { defineConfig } = require('@vue/cli-service')
-### ++ const { VantResolver } = require("unplugin-vue-components/resolvers");
-### ++ const ComponentsPlugin = require("unplugin-vue-components/webpack");
+```
+const { defineConfig } = require('@vue/cli-service')
+
+++ const { VantResolver } = require("unplugin-vue-components/resolvers");
+
+++ const ComponentsPlugin = require("unplugin-vue-components/webpack");
+
 ++ const NodePolyfillWebpackPlugin = require("node-polyfill-webpack-plugin")
 
 module.exports = defineConfig({
@@ -60,6 +65,7 @@ new NodePolyfillWebpackPlugin(),
 ComponentsPlugin({ resolvers: [VantResolver()] }),
 ],
 },
+```
 
 ## Project setup
 
@@ -89,3 +95,4 @@ npm run build
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 ```
+````
