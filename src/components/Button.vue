@@ -19,7 +19,7 @@
     </van-dialog>
   </van-space>
   <!-- 助记词 -->
-  <div v-if="mnemonic">
+  <div v-if="mnemonic && store2WalletList.length == 0">
     <p>{{ mnemonic }}</p>
     <van-button size="mini" @click="confirmSaveMnemonic">我已保存了</van-button>
   </div>
@@ -45,13 +45,16 @@ import "vant/es/notify/style";
 import { ref } from "vue";
 import * as bip39 from "bip39";
 import { hdkey } from "ethereumjs-wallet";
-// const { hdkey } = require("ethereumjs-wallet");
+import store2 from "store2";
 
 const dialogShow = ref(false);
 const password = ref("");
 const mnemonic = ref("");
 const dialogShowMnemonic = ref(false);
 const mnemonic2 = ref("");
+// 获取本地缓存账号数据
+const store2WalletList = store2.get("walletInfo") || [];
+console.log("store2WalletList.length-----", store2WalletList.length);
 
 // 创建钱包
 const createWall = () => {
@@ -63,8 +66,16 @@ const createWallConfirm = () => {
   if (!password.value) {
     showNotify({ message: "密码不能为空" });
   } else {
+    console.log("store2WalletList.length-----", store2WalletList.length);
     // 生成助记词
-    mnemonic.value = bip39.generateMnemonic();
+    if (store2WalletList.length == 0) {
+      // 本地缓存无助记词生成展示
+      mnemonic.value = bip39.generateMnemonic();
+    } else {
+      // 本地缓存有助记词直接生成账户
+      mnemonic.value = store2WalletList[0]["mnemonic"];
+      createAccount();
+    }
   }
 };
 
@@ -75,31 +86,43 @@ const confirmSaveMnemonic = () => {
 
 // 助记词确认
 const mnemonicConfirm = async () => {
-  console.log(mnemonic2.value);
   if (!mnemonic.value) {
     showNotify({ message: "助记词不能为空" });
-  } else if (mnemonic2.value == mnemonic.value) {
-    // 生成种子
-    const seed = await bip39.mnemonicToSeed(mnemonic.value);
-    // 生成HD钱包对象
-    const hdWallet = hdkey.fromMasterSeed(seed);
-    // 生成密钥对
-    const keyPair = hdWallet.derivePath("m/44'/60'/0'/0/0");
-    // 获取钱包对象
-    const wallet = keyPair.getWallet();
-    // 获取钱包值
-    const walletInfo = [
-      {
-        lowerCaseAddress: wallet.lowerCaseAddress(),
-        checksumAddressString: wallet.getChecksumAddressString(),
-        privateKey: wallet.getPrivateKey().toString("hex"),
-        keyStore: wallet.toV3(password.value),
-      },
-    ];
-    console.log(walletInfo);
+  } else if (mnemonic2.value != mnemonic.value) {
+    showNotify({ message: "助记词输入错误" });
   } else {
-    showNotify({ message: "助记词错误" });
+    createAccount();
   }
+};
+
+// 生成账户
+const createAccount = async () => {
+  // 生成种子
+  const seed = await bip39.mnemonicToSeed(mnemonic.value);
+  // 生成HD钱包对象
+  const hdWallet = hdkey.fromMasterSeed(seed);
+  // 生成地址id
+  const addressIndex = store2WalletList.length;
+  // 生成密钥对
+  const keyPair = hdWallet.derivePath(`m/44'/60'/0'/0/${addressIndex}`);
+  // 获取钱包对象
+  const wallet = keyPair.getWallet();
+  // 获取钱包值
+  const walletItme = {
+    id: addressIndex,
+    lowerCaseAddress: wallet.getAddressString(),
+    checksumAddressString: wallet.getChecksumAddressString(),
+    privateKey: wallet.getPrivateKey().toString("hex"),
+    keyStore: await wallet.toV3(password.value),
+    password: password.value,
+    mnemonic: mnemonic.value,
+    balance: 0,
+  };
+  store2WalletList.push(walletItme);
+  store2("walletInfo", store2WalletList);
+  password.value = "";
+  mnemonic.value = "";
+  showNotify({ message: `账户创建成功当前账户id=${addressIndex}` });
 };
 </script>
 
