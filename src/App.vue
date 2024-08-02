@@ -1,10 +1,8 @@
 <template>
-  <Button></Button>
+  <router-view />
 </template>
 
-<script setup>
-import Button from "./components/Button.vue";
-</script>
+<script setup></script>
 
 <style lang="less">
 body {
