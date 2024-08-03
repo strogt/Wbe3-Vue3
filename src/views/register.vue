@@ -55,6 +55,8 @@ import { ref } from "vue";
 import * as bip39 from "bip39";
 import { hdkey } from "ethereumjs-wallet";
 import store2 from "store2";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const dialogShow = ref(false);
 const password = ref("");
@@ -135,6 +137,7 @@ const createAccount = async () => {
   password.value = "";
   mnemonic.value = "";
   showNotify({ message: `账户创建成功当前账户id=${addressIndex}` });
+  router.push({ name: "user" });
 };
 </script>
 

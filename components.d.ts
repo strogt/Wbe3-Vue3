@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AccountList: typeof import('./src/components/AccountList.vue')['default']
     Button: typeof import('./src/components/Button.vue')['default']
     Footer: typeof import('./src/components/Footer.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
@@ -18,6 +19,8 @@ declare module 'vue' {
     VanField: typeof import('vant/es')['Field']
     VanIcon: typeof import('vant/es')['Icon']
     VanLoading: typeof import('vant/es')['Loading']
+    VanPicker: typeof import('vant/es')['Picker']
+    VanPopup: typeof import('vant/es')['Popup']
     VanSpace: typeof import('vant/es')['Space']
   }
 }

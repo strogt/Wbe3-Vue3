@@ -81,9 +81,9 @@ const routes = [
   },
   // 账户列表
   {
-    path: "/accountList",
-    name: "accountList",
-    component: () => import("@/views/accountList.vue"),
+    path: "/user",
+    name: "user",
+    component: () => import("@/views/user.vue"),
   },
 ];
 
