@@ -46,38 +46,43 @@ const send = async (item) => {
   console.log("key---", key);
   const privateKey = Buffer(key, "hex");
   console.log("privateKey---", privateKey);
-  // const fromAddress = item.value;
-  // // 获取账户交易次数
-  // const nonce = await web3.eth.getTransactionCount(fromAddress);
-  // // 获取预计转账gas
-  // const gasPrice = await web3.eth.getGasPrice();
+  const fromAddress = item.value;
+  // 获取账户交易次数
+  const nonce = await web3.eth.getTransactionCount(fromAddress);
+  // 获取预计转账gas
+  const gasPrice = await web3.eth.getGasPrice();
 
-  // // 转账金额以wei为单外
-  // let value = web3.utils.toWei("0.001", "ether");
-  // let rawTx = {
-  //   from: fromAddress,
-  //   nonce,
-  //   gasPrice,
-  //   to: "0xaA5bb004Ae4756eBd33dd1377B59263C130efA21",
-  //   value,
-  //   data: "0x00",
-  // };
-  // console.log("rawTx----", rawTx);
+  // 转账金额以wei为单外
+  let value = web3.utils.toWei("0.001", "ether");
+  let rawTx = {
+    from: fromAddress,
+    nonce,
+    gasPrice,
+    to: "0xaA5bb004Ae4756eBd33dd1377B59263C130efA21",
+    value,
+    data: "0x00",
+  };
 
-  // // 2.生成serializedTx
-  // // gas 估算
-  // let gas = await web3.eth.estimateGas(rawTx);
-  // console.log("gas----", gas);
-  // rawTx.gas = gas;
-  // // 使用ethereumjs-tx 实现秘钥加密
-  // const tx = new Tx(rawTx);
-  // tx.sign(privateKey);
-  // // 生成serializedTx
-  // const serializedTx = tx.serialize();
-  // console.log("serializedTx----", serializedTx);
+  // 2.生成serializedTx
+  // gas 估算
+  let gas = await web3.eth.estimateGas(rawTx);
+  console.log("gas----", gas);
+  rawTx.gas = gas;
+  console.log("rawTx----", rawTx);
+  // 使用ethereumjs-tx 实现秘钥加密
+  const tx = new Tx(rawTx);
+  tx.sign(privateKey);
+  console.log(111);
+
+  // 生成serializedTx
+  const serializedTx = tx.serialize();
+  console.log("serializedTx----", serializedTx);
 
   // 开始转账
-  // const trans = web3.eth.sendSignedTransaction(serializedTx);
+  // const trans = web3.eth.sendSignedTransaction(
+  //   "0x" + serializedTx.toString("hex")
+  // );
+  // console.log("trans----", trans);
   // trans.on("transactionHash", (txid) => {
   //   console.log("交易id:", txid);
   //   console.log(`https://sepolia.etherscan.io/tx/${txid}`);

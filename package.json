@@ -17,7 +17,7 @@
     "vant": "^4.0.7",
     "vue": "^3.2.13",
     "vue-router": "^4.4.2",
-    "web3": "^4.8.0"
+    "web3": "^1.8.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.0",
